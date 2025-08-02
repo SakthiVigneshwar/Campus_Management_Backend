@@ -11,11 +11,18 @@ import java.util.List;
 public class AttendanceService {
 
     @Autowired
-    private AttendanceRecordRepository attendanceRepo;
+    private AttendanceRecordRepository attendanceRepository;
 
     public String submitAttendance(List<AttendanceRecord> records) {
-        attendanceRepo.saveAll(records);
-        return "Attendance Submitted Successfully";
+        attendanceRepository.saveAll(records);
+        return "Attendance submitted successfully!";
+    }
+
+    public List<AttendanceRecord> getAllAttendance() {
+        return attendanceRepository.findAll();
+    }
+
+    public void deleteAllAttendance() {
+        attendanceRepository.deleteAll();
     }
 }
-

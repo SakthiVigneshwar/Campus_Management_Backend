@@ -6,8 +6,11 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class ClassScheduleService {
@@ -31,15 +34,40 @@ public class ClassScheduleService {
     public void forceInsertSampleData() {
         repository.deleteAll(); // Clear existing data
 
-        List<ClassSchedule> sampleSchedules = List.of(
-                new ClassSchedule("CL001", "2025", "CS101", "Data Structures", 1, "Monday", LocalDate.of(2025, 7, 27)),
-                new ClassSchedule("CL002", "2026", "CS101", "Data Structures", 2, "Monday", LocalDate.of(2025, 7, 27)),
-                new ClassSchedule("CL003", "2027", "EC202", "Digital Circuits", 3, "Monday", LocalDate.of(2025, 7, 27)),
-                new ClassSchedule("CL004", "2028", "CS101", "Data Structures", 1, "Tuesday", LocalDate.of(2025, 7, 28)),
-                new ClassSchedule("CL005", "2029", "CS101", "Data Structures", 2, "Tuesday", LocalDate.of(2025, 8, 1))
-        );
-        repository.saveAll(sampleSchedules);
-        System.out.println("✅ All sample class schedules force-inserted.");
-    }
+        List<ClassSchedule> sampleSchedules = new ArrayList<>();
 
+        String[] courseCodes = { "21PD20", "21PD21", "21PD22", "21PD23", "21PD24" };
+        String[] courseNames = { "Data Structures", "Operating Systems", "Computer Networks", "Software Engineering", "Database Systems" };
+        String[] batches = { "2026", "2027", "2028", "2029" };
+
+        Random random = new Random();
+        int idCounter = 1;
+
+        for (int day = 1; day <= 31; day++) {
+            LocalDate date = LocalDate.of(2025, 8, day);
+            DayOfWeek dow = date.getDayOfWeek();
+            String dayOfWeek = dow.toString().substring(0, 1) + dow.toString().substring(1).toLowerCase();
+
+            for (int i = 0; i < 5; i++) {
+                String id = String.format("CL%03d", idCounter++);
+                String batch = batches[random.nextInt(batches.length)];
+                String courseCode = courseCodes[i];
+                String courseName = courseNames[i];
+                int hour = i + 1;
+
+                sampleSchedules.add(new ClassSchedule(
+                        id,
+                        batch,
+                        courseCode,
+                        courseName,
+                        hour,
+                        dayOfWeek,
+                        date
+                ));
+            }
+        }
+
+        repository.saveAll(sampleSchedules);
+        System.out.println("✅ Auto-generated class schedules inserted (Aug 2025).");
+    }
 }
